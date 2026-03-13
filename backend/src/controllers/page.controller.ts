@@ -1,54 +1,44 @@
-import { Request, Response } from "express";
-import Page from "../models/page.model";
-import User from "../models/user.model";
-import slugify from "slugify";
+import { Request, Response, NextFunction } from "express";
+import { createPageService, updatePageService } from "../services/page.service";
+import { AppError } from "../utils/AppError";
 
-export const createPage = async (req: Request, res: Response): Promise<void> => {
+export const createPage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const { username, title } = req.body;
-
-    if (!username) {
-      res.status(400).json({
-        success: false,
-        message: "Username is required",
-      });
-      return;
-    }
-
-    const user = await User.findOne({ username });
-
-    if (!user) {
-      res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-      return;
-    }
-
-    const pageTitle = title || "Untitled";
-
-    const slug = slugify(pageTitle, {
-      lower: true,
-      strict: true,
-    });
-
-    const page = await Page.create({
-      title: pageTitle,
-      slug,
-      userId: user._id,
-      content: {},
-    });
+    const page = await createPageService(req.body);
 
     res.status(201).json({
       success: true,
       data: page,
     });
   } catch (error) {
-    console.error("create page error", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to create page",
-      error: error instanceof Error ? error.message : String(error)
+    next(error);
+  }
+};
+
+export const updatePage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { pageId } = req.params;
+
+    // validate pageId
+    if (!pageId || typeof pageId !== "string") {
+      throw new AppError("Invalid pageId", 400);
+    }
+
+    const updatedPage = await updatePageService(pageId, req.body);
+
+    res.status(200).json({
+      success: true,
+      data: updatedPage,
     });
+  } catch (error) {
+    next(error);
   }
 };
