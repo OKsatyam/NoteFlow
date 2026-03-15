@@ -3,6 +3,7 @@ import cors from "cors";
 import pageRoutes from "./routes/v1/page.routes";
 import folderRoutes from "./routes/v1/folder.routes";
 import publicRoutes from "./routes/v1/public.routes";
+import userRoutes from "./routes/v1/user.routes";
 import { errorHandler } from "./middleware/error.middleware";
 
 const app = express();
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/pages", pageRoutes);
 app.use("/api/v1/folders", folderRoutes);
 app.use("/api/v1/public", publicRoutes);
+app.use("/api/v1/users", userRoutes);
 
 // Error handler MUST be after all routes
 app.use(errorHandler);

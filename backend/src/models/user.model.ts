@@ -5,6 +5,9 @@ export interface IUser extends Document {
     username: string;
     email: string;
     image?: string;
+    password?: string;
+    provider: "google" | "github" | "credentials";
+    isOnboarded: boolean;
 }
 
 const userSchema = new Schema<IUser>(
@@ -34,6 +37,21 @@ const userSchema = new Schema<IUser>(
 
         image: {
             type: String,
+        },
+
+        password: {
+            type: String,
+        },
+
+        provider: {
+            type: String,
+            enum: ["google", "github", "credentials"],
+            required: true,
+        },
+
+        isOnboarded: {
+            type: Boolean,
+            default: false,
         },
     },
     {
