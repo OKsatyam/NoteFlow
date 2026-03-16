@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 5000;
 const startServer = async () => {
   await connectDB();
 
-  cron.schedule("* * * * *", async () => {
+  cron.schedule("0 0 * * *", async () => {
     console.log("[Cron] Running trash cleanup...");
     await cleanupTrash();
   });

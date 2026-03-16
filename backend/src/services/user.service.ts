@@ -54,10 +54,38 @@ export const createUserService = async (data: CreateUserData) => {
 export const getUserByUsernameService = async (username: string) => {
     // Exclude password from the response
     const user = await User.findOne({ username }).select("-password");
-    
+
     if (!user) {
         throw new AppError("User not found", 404);
     }
-    
+
+    return user;
+};
+
+export const loginUserService = async (email: string, password?: string) => {
+    if (!email) throw new AppError("Email is required", 400);
+    if (!password) throw new AppError("Password is required", 400);
+
+    // We explicitly selecting the password since it is not automatically returned
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        throw new AppError("Invalid credentials", 401);
+    }
+
+    if (user.provider !== "credentials") {
+        throw new AppError(`User signed up with ${user.provider}. Please use that to login.`, 401);
+    }
+
+    if (!user.password) {
+        throw new AppError("Invalid credentials", 401);
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+        throw new AppError("Invalid credentials", 401);
+    }
+
     return user;
 };

@@ -3,6 +3,7 @@ import {
     checkUsernameService,
     createUserService,
     getUserByUsernameService,
+    loginUserService,
 } from "../services/user.service";
 
 export const checkUsername = async (
@@ -24,6 +25,37 @@ export const checkUsername = async (
     }
 };
 
+export const loginUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            res.status(400).json({ success: false, message: "Email and password are required" });
+            return;
+        }
+
+        const user = await loginUserService(email, password);
+
+        if (!user) {
+            res.status(401).json({ success: false, message: "Invalid credentials" });
+            return;
+        }
+
+        // Remove password from the response object
+        const userObj = user.toObject();
+        if (userObj.password) {
+            delete userObj.password;
+        }
+
+        res.status(200).json({ success: true, data: userObj });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const createUser = async (
     req: Request,
     res: Response,
@@ -31,13 +63,13 @@ export const createUser = async (
 ) => {
     try {
         const user = await createUserService(req.body);
-        
+
         // Remove password from the response object
         const userObj = user.toObject();
         if (userObj.password) {
             delete userObj.password;
         }
-        
+
         res.status(201).json({ success: true, data: userObj });
     } catch (error) {
         next(error);
@@ -55,7 +87,7 @@ export const getUserByUsername = async (
             res.status(400).json({ success: false, message: "Username is required" });
             return;
         }
-        
+
         const user = await getUserByUsernameService(username);
         res.status(200).json({ success: true, data: user });
     } catch (error) {

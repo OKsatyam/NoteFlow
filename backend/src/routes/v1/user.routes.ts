@@ -3,6 +3,7 @@ import {
     checkUsername,
     createUser,
     getUserByUsername,
+    loginUser,
 } from "../../controllers/user.controller";
 
 const router = express.Router();
@@ -15,5 +16,8 @@ router.post("/", createUser);
 
 // Get user profile by username
 router.get("/:username", getUserByUsername);
+
+// Login (email/password)
+router.post("/login", loginUser);
 
 export default router;
