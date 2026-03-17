@@ -278,7 +278,10 @@ export const publishPageService = async (pageId: string, username: string) => {
   // block publishing if content is empty
   const isEmpty =
     !page.content ||
-    Object.keys(page.content).length === 0;
+    Object.keys(page.content).length === 0 ||
+    (page.content.text !== undefined && page.content.text.trim() === "") ||
+    (page.content.type === "doc" &&
+      (!page.content.content || page.content.content.length === 0));
 
   if (isEmpty) {
     throw new AppError("Cannot publish an empty page", 400);

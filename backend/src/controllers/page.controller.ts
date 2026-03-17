@@ -32,13 +32,12 @@ export const updatePage = async (
 ): Promise<void> => {
   try {
     const { pageId } = req.params;
+    const { username, ...updateData } = req.body; // username from body for PATCH
 
-    // validate pageId
-    if (!pageId || typeof pageId !== "string") {
-      throw new AppError("Invalid pageId", 400);
-    }
+    if (!username) throw new AppError("Username is required", 400);
+    if (!pageId || typeof pageId !== "string") throw new AppError("Invalid pageId", 400);
 
-    const updatedPage = await updatePageService(pageId, req.body);
+    const updatedPage = await updatePageService(pageId, updateData);
 
     res.status(200).json({
       success: true,

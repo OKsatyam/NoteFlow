@@ -27,7 +27,7 @@ router.delete("/trash/:pageId", hardDeletePage);
 
 // Single page CRUD
 router.get("/:pageId", getPageById);
-router.put("/:pageId", updatePage);
+router.patch("/:pageId", updatePage);
 router.delete("/:pageId", deletePage);
 
 // Publish / unpublish
