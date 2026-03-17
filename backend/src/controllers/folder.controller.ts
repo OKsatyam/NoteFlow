@@ -36,7 +36,7 @@ export const listFolders = async (
     next: NextFunction
 ): Promise<void> => {
     try {
-        const { username } = req.body;
+        const username = req.query.username as string;
 
         if (!username) throw new AppError("Username is required", 400);
 

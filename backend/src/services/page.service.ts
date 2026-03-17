@@ -7,9 +7,11 @@ import Folder from "../models/folder.model";
 export const createPageService = async ({
   username,
   title,
+  folderId,
 }: {
   username: string;
   title?: string;
+  folderId?: string;
 }) => {
   if (!username) {
     throw new AppError("Username is required", 400);
@@ -28,20 +30,25 @@ export const createPageService = async ({
     strict: true,
   });
 
-  const existingPage = await Page.findOne({
-    userId: user._id,
-    slug,
-  });
-
-  if (existingPage) {
-    throw new AppError("Page with this title already exists", 409);
+  let finalSlug = slug;
+  let counter = 1;
+  while (
+    await Page.findOne({
+      userId: user._id,
+      slug: finalSlug,
+      isDeleted: false,
+    })
+  ) {
+    finalSlug = `${slug}-${counter}`;
+    counter++;
   }
 
   const page = await Page.create({
     title: pageTitle,
-    slug,
+    slug: finalSlug,
     userId: user._id,
     content: {},
+    folderId: folderId || null,
   });
 
   return page;
@@ -204,6 +211,16 @@ export const restorePageService = async (pageId: string, username: string) => {
   // ownership check
   if (page.userId.toString() !== user._id.toString()) {
     throw new AppError("You do not have access to this page", 403);
+  }
+
+  // Check if original folder still exists and is not deleted
+  if (page.folderId) {
+    const folder = await Folder.findOne({ _id: page.folderId, isDeleted: false });
+    if (!folder) {
+      // Folder was deleted → restore as loose page
+      page.folderId = null;
+    }
+    // Folder exists → keep folderId intact → restores into original folder
   }
 
   page.isDeleted = false;

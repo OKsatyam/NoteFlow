@@ -56,7 +56,7 @@ export const getPageById = async (
 ): Promise<void> => {
   try {
     const { pageId } = req.params;
-    const { username } = req.body;
+    const username = req.query.username as string;
 
     if (!username) {
       throw new AppError("Username is required", 400);
@@ -83,7 +83,7 @@ export const listPages = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { username } = req.body;
+    const username = req.query.username as string;
 
     if (!username) {
       throw new AppError("Username is required", 400);
@@ -133,7 +133,7 @@ export const getTrashedPages = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { username } = req.body;
+    const username = req.query.username as string;
 
     if (!username) throw new AppError("Username is required", 400);
 
