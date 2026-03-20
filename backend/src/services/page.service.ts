@@ -36,7 +36,6 @@ export const createPageService = async ({
     await Page.findOne({
       userId: user._id,
       slug: finalSlug,
-      isDeleted: false,
     })
   ) {
     finalSlug = `${slug}-${counter}`;
