@@ -1,11 +1,13 @@
-# Dependencies
+# NoteFlow Backend - Git-Ignore
+# Core Dependencies
 node_modules/
 
-# Build output
+# Build & Output
 dist/
 build/
+*.tsbuildinfo
 
-# Environment variables
+# Environment & Secrets
 .env
 .env.local
 .env.production
@@ -15,17 +17,12 @@ logs/
 *.log
 npm-debug.log*
 
-# Runtime
-pids/
-*.pid
-*.seed
-
-# OS files
+# OS-specific
 .DS_Store
 Thumbs.db
 
-# TypeScript
-*.tsbuildinfo
-
-# Debug
+# Runtime/Debug
+pids/
+*.pid
+*.seed
 .npm
